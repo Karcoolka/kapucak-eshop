@@ -4,8 +4,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma";
 import { convertToPlainObject } from "../utils";
 import { LATEST_PRODUCTS_LIMIT } from "../constants";
+import { Product } from "@/types";
 
-export async function getLatestProducts() {
+export async function getLatestProducts(): Promise<Product[]> {
     // const prisma = new PrismaClient();
     // we have to use adapter:
 
@@ -18,5 +19,5 @@ export async function getLatestProducts() {
         orderBy: { createdAt: 'desc' },
     });
 
-    return convertToPlainObject(data);
+    return convertToPlainObject(data) as unknown as Product[];
 }
