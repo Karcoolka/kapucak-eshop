@@ -29,3 +29,63 @@ model Product {
   banner     String?
   createdAt DateTime @default(now()) @db.Timestamp(6)
 }
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String    @default("NO_NAME")
+  email         String    @unique(map: "user_email_idx")
+  password      String?
+  role          String    @default("user")
+  emailVerified DateTime? @db.Timestamp(6)
+  image         String?
+  address       Json?     @db.Json
+  paymentMethod String?
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt
+  account       Account[] //i is mapped
+  session       Session[]  //i is mapped
+}
+
+model Account {
+  userId            String  @db.Uuid //foreign key that paps to the User model
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+ 
+ //mapped to user model, lines bellow saying:
+ // userId in this model maps to id in the User model
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @id
+  userId       String   @db.Uuid
+  expires      DateTime @db.Timestamp(6)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  //create user field, map it to User model, use user Id and refference the id to user model
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])  //is is mix of those fields that are unique together
+}
+
+
+
+
