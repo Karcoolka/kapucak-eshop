@@ -32,7 +32,12 @@ export async function signInWithCredentials(
 
   // Sign the user out
 export async function signOutUser() {
-    await signOut();
+    try {
+      await signOut({ redirectTo: '/' });
+    } catch (error) {
+      if (isRedirectError(error)) throw error;
+      throw error;
+    }
   }
 
   // Sign up user

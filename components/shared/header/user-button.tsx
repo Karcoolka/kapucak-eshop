@@ -8,7 +8,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { signOutUser } from '@/lib/actions/user-actions';
 
 const UserButton = async () => {
     const session = await auth();
@@ -45,15 +44,16 @@ const UserButton = async () => {
           </div>
         </DropdownMenuLabel>
   
-        <DropdownMenuItem className='p-0 mb-1'>
-          <form action={signOutUser} className='w-full'>
+        <DropdownMenuItem asChild className='p-0 mb-1'>
+          <Link href='/api/auth/signout?callbackUrl=/' className='block w-full'>
             <Button
+              type='button'
               className='w-full py-4 px-2 h-4 justify-start'
               variant='ghost'
             >
               Sign Out
             </Button>
-          </form>
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
