@@ -95,7 +95,7 @@ export const config = {
           // Check for cart cookie
           if (!request.cookies.get('sessionCartId')) {
             // Generate cart cookie
-            const sessionCartId = crypto.randomUUID(); 
+            const sessionCartId = globalThis.crypto.randomUUID(); 
         
             // Clone the request headers
             const newRequestHeaders = new Headers(request.headers); 
