@@ -26,8 +26,24 @@ export const shippingAddressDefaultValues = {
   country: "",
 };
 
-export const PAYMENT_METHODS = process.env.PAYMENT_METHODS
-  ? process.env.PAYMENT_METHODS.split(', ')
-  : ['PayPal', 'Stripe', 'CashOnDelivery'];
+export const DEFAULT_PAYMENT_METHODS = [
+  'PayPal',
+  'Stripe',
+  'CashOnDelivery',
+];
+
+function parsePaymentMethods(value: string): string[] {
+  return value
+    .split(',')
+    .map((s) => s.trim().replace(/^['"]|['"];?$/g, '').trim())
+    .filter(Boolean);
+}
+
+const fromEnv = process.env.PAYMENT_METHODS
+  ? parsePaymentMethods(process.env.PAYMENT_METHODS)
+  : [];
+
+export const PAYMENT_METHODS =
+  fromEnv.length > 0 ? fromEnv : [...DEFAULT_PAYMENT_METHODS];
 export const DEFAULT_PAYMENT_METHOD =
   process.env.DEFAULT_PAYMENT_METHOD || 'PayPal';
