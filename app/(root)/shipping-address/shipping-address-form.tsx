@@ -10,7 +10,7 @@ import { ControllerRenderProps } from 'react-hook-form';
 import { shippingAddressDefaultValues } from '@/lib/constants';
 import { toast } from 'sonner';
 import { useTransition } from 'react';
-import { updateUserAddress } from '@/lib/actions/user-actions';
+import { updateUserAddress } from '@/lib/actions/user.actions';
 
 import {
   Form,
