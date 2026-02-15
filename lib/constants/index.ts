@@ -47,3 +47,5 @@ export const PAYMENT_METHODS =
   fromEnv.length > 0 ? fromEnv : [...DEFAULT_PAYMENT_METHODS];
 export const DEFAULT_PAYMENT_METHOD =
   process.env.DEFAULT_PAYMENT_METHOD || 'PayPal';
+
+  export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 2;
