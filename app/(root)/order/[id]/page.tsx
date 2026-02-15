@@ -19,15 +19,16 @@ const OrderDetailsPage = async (props: {
   const order = await getOrderById(id);
   if (!order) notFound();
 
-  const { orderitems, ...rest } = order;
+  const { orderItems, user, ...rest } = order as any;
   const orderForTable: Order = {
     ...rest,
+    user: user,
     shippingAddress: order.shippingAddress as ShippingAddress,
     itemsPrice: String(order.itemsPrice ?? ''),
     shippingPrice: String(order.shippingPrice ?? ''),
     taxPrice: String(order.taxPrice ?? ''),
     totalPrice: String(order.totalPrice ?? ''),
-    orderItems: orderitems ?? [],
+    orderItems: orderItems ?? [],
   };
 
   return <OrderDetailsTable order={orderForTable} />;
