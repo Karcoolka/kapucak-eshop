@@ -31,7 +31,7 @@ const OrderDetailsPage = async (props: {
     orderItems: orderItems ?? [],
   };
 
-  return <OrderDetailsTable order={orderForTable} />;
+  return <OrderDetailsTable order={orderForTable} paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'} />;
 
 };
 
