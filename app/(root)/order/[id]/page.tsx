@@ -1,7 +1,9 @@
-import { getOrderById } from '@/lib/actions/order.actions';
+import { getOrderById, updateOrderToPaidByCOD, deliverOrder } from '@/lib/actions/order.actions';
 import { notFound } from 'next/navigation';
 import OrderDetailsTable from './order-details-table';
 import { Order, ShippingAddress } from '@/types';
+import { auth } from '@/auth';
+
 
 export const metadata = {
   title: 'Order Details',
@@ -19,6 +21,8 @@ const OrderDetailsPage = async (props: {
   const order = await getOrderById(id);
   if (!order) notFound();
 
+  const session = await auth();
+
   const { orderItems, user, ...rest } = order as any;
   const orderForTable: Order = {
     ...rest,
@@ -31,7 +35,11 @@ const OrderDetailsPage = async (props: {
     orderItems: orderItems ?? [],
   };
 
-  return <OrderDetailsTable order={orderForTable} paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'} />;
+  return <OrderDetailsTable
+    order={orderForTable}
+    paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
+    isAdmin={session?.user.role === 'admin' || false}
+  />;
 
 };
 
