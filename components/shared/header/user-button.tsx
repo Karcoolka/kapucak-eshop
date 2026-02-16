@@ -54,6 +54,15 @@ const UserButton = async () => {
               Order History
             </Link>
           </DropdownMenuItem>
+
+          {session?.user?.role === "admin" && (
+            <DropdownMenuItem>
+              <Link className="w-full" href="/admin/overview">
+                Admin
+              </Link>
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem asChild className="p-0 mb-1">
             <Link
               href="/api/auth/signout?callbackUrl=/"
