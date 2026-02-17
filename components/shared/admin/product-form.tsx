@@ -27,6 +27,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadButton } from "@/lib/uploadthing";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ProductForm = ({
   type,
@@ -81,7 +82,9 @@ const ProductForm = ({
     }
   };
 
-  const images = form.watch('images');
+  const images = form.watch("images");
+  const isFeatured = form.watch("isFeatured");
+  const banner = form.watch("banner");
 
   return (
     <Form {...form}>
@@ -246,52 +249,103 @@ const ProductForm = ({
           />
         </div>
         <div className="upload-field flex flex-col gap-5 md:flex-row">
-        <FormField
-        control={form.control}
-        name='images'
-        render={() => (
-          <FormItem className='w-full'>
-            <FormLabel>Images</FormLabel>
-            <Card>
-              <CardContent className='space-y-2 mt-2 min-h-48'>
-                <div className='flex-start space-x-2'>
-                  {images.map((image: string) => (
-                    <Image
-                      key={image}
-                      src={image}
-                      alt='product image'
-                      className='w-20 h-20 object-cover object-center rounded-sm'
-                      width={100}
-                      height={100}
-                    />
-                  ))}
-                  <FormControl>
-                    <div className='flex min-h-20 w-40 flex-shrink-0 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/25 bg-muted/30'>
-                      <UploadButton
-                        endpoint='imageUploader'
-                        content={{
-                          button: 'Choose image',
-                        }}
-                        onClientUploadComplete={(res: { url: string }[]) => {
-                          const current = (form.getValues('images') ?? []) as string[];
-                          form.setValue('images', [...current, res[0].url]);
-                        }}
-                        onUploadError={(error: Error) => {
-                          toast.error(`ERROR! ${error.message}`);
-                        }}
-                        className='cursor-pointer text-sm font-medium text-foreground'
-                      />
+          <FormField
+            control={form.control}
+            name="images"
+            render={() => (
+              <FormItem className="w-full">
+                <FormLabel>Images</FormLabel>
+                <Card>
+                  <CardContent className="space-y-2 mt-2 min-h-48">
+                    <div className="flex-start space-x-2">
+                      {images.map((image: string) => (
+                        <Image
+                          key={image}
+                          src={image}
+                          alt="product image"
+                          className="w-20 h-20 object-cover object-center rounded-sm"
+                          width={100}
+                          height={100}
+                        />
+                      ))}
+                      <FormControl>
+                        <div className="flex min-h-20 w-40 flex-shrink-0 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/25 bg-muted/30">
+                          <UploadButton
+                            endpoint="imageUploader"
+                            content={{
+                              button: "Choose image",
+                            }}
+                            onClientUploadComplete={(
+                              res: { url: string }[],
+                            ) => {
+                              const current = (form.getValues("images") ??
+                                []) as string[];
+                              form.setValue("images", [...current, res[0].url]);
+                            }}
+                            onUploadError={(error: Error) => {
+                              toast.error(`ERROR! ${error.message}`);
+                            }}
+                            className="cursor-pointer text-sm font-medium text-foreground"
+                          />
+                        </div>
+                      </FormControl>
                     </div>
-                  </FormControl>
-                </div>
-              </CardContent>
-            </Card>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                  </CardContent>
+                </Card>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-        <div className="upload-field">{/* Is Featured */}</div>
+        <div className="upload-field">
+          Featured Product
+          <Card>
+            <CardContent className="space-y-2 mt-2  ">
+              <FormField
+                control={form.control}
+                name="isFeatured"
+                render={({ field }) => (
+                  <FormItem className="space-x-2 items-center">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel>Is Featured?</FormLabel>
+                  </FormItem>
+                )}
+              />
+              {isFeatured && banner && (
+                <Image
+                  src={banner}
+                  alt="banner image"
+                  className=" w-full object-cover object-center rounded-sm"
+                  width={1920}
+                  height={680}
+                />
+              )}
+              {isFeatured && !banner && (
+                <div className="flex min-h-20 w-40 shrink-0 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/25 bg-muted/30">
+                  <UploadButton
+                    endpoint="imageUploader"
+                    content={{
+                      button: 'Choose banner image',
+                    }}
+                    onClientUploadComplete={(res: { url: string }[]) => {
+                      form.setValue("banner", res[0].url);
+                    }}
+                    onUploadError={(error: Error) => {
+                      toast.error(`ERROR! ${error.message}`);
+                    }}
+                    className="cursor-pointer text-sm font-medium text-foreground"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         <div>
           {/* Description */}
           <FormField
@@ -320,8 +374,13 @@ const ProductForm = ({
           />
         </div>
         <div>
-          <Button type="submit" size="lg" disabled={form.formState.isSubmitting} className=" button col-span-2 w-full">
-          {form.formState.isSubmitting ? "Submitting..." : `${type} Product` }
+          <Button
+            type="submit"
+            size="lg"
+            disabled={form.formState.isSubmitting}
+            className=" button col-span-2 w-full"
+          >
+            {form.formState.isSubmitting ? "Submitting..." : `${type} Product`}
           </Button>
         </div>
       </form>
