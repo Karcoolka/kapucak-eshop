@@ -266,15 +266,22 @@ const ProductForm = ({
                     />
                   ))}
                   <FormControl>
-                    <UploadButton
-                      endpoint='imageUploader'
-                      onClientUploadComplete={(res: { url: string }[]) => {
-                        form.setValue('images', [...images, res[0].url]);
-                      }}
-                      onUploadError={(error: Error) => {
-                        toast.error(`ERROR! ${error.message}`);
-                      }}
-                    />
+                    <div className='flex min-h-20 w-40 flex-shrink-0 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/25 bg-muted/30'>
+                      <UploadButton
+                        endpoint='imageUploader'
+                        content={{
+                          button: 'Choose image',
+                        }}
+                        onClientUploadComplete={(res: { url: string }[]) => {
+                          const current = (form.getValues('images') ?? []) as string[];
+                          form.setValue('images', [...current, res[0].url]);
+                        }}
+                        onUploadError={(error: Error) => {
+                          toast.error(`ERROR! ${error.message}`);
+                        }}
+                        className='cursor-pointer text-sm font-medium text-foreground'
+                      />
+                    </div>
                   </FormControl>
                 </div>
               </CardContent>

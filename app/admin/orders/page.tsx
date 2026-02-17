@@ -7,10 +7,10 @@ import { TableHead } from '@/components/ui/table';
 import { TableBody } from '@/components/ui/table';
 import { TableCell } from '@/components/ui/table';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Link } from 'lucide-react';
+import Link from 'next/link';
 import Pagination from '@/components/shared/header/pagination';
 import DeleteDialog from '@/components/shared/delete-dialog';
+import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'Admin Orders',
