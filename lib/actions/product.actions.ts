@@ -41,14 +41,22 @@ export async function getAllProducts({
   limit = PAGE_SIZE,
   page,
   category,
+  price,
+  rating,
+  sort,
 }: {
   query: string;
+  category: string;
   limit?: number;
   page: number;
-  category: string;
+  price?: string;
+  rating?: string;
+  sort?: string;
 }) {
-  const search = (query ?? '').trim();
-  const categoryFilter = (category ?? '').trim();
+  const rawQuery = (query ?? '').trim();
+  const rawCategory = (category ?? '').trim();
+  const search = rawQuery && rawQuery !== 'all' ? rawQuery : '';
+  const categoryFilter = rawCategory && rawCategory !== 'all' ? rawCategory : '';
 
   const whereClause =
     search && categoryFilter
