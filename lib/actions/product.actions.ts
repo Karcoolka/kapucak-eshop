@@ -47,13 +47,47 @@ export async function getAllProducts({
   page: number;
   category: string;
 }) {
+  const search = (query ?? '').trim();
+  const categoryFilter = (category ?? '').trim();
+
+  const whereClause =
+    search && categoryFilter
+      ? {
+          AND: [
+            {
+              OR: [
+                { name: { contains: search, mode: 'insensitive' as const } },
+                { slug: { contains: search, mode: 'insensitive' as const } },
+                { description: { contains: search, mode: 'insensitive' as const } },
+                { brand: { contains: search, mode: 'insensitive' as const } },
+                { category: { contains: search, mode: 'insensitive' as const } },
+              ],
+            },
+            { category: categoryFilter },
+          ],
+        }
+      : search
+        ? {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' as const } },
+              { slug: { contains: search, mode: 'insensitive' as const } },
+              { description: { contains: search, mode: 'insensitive' as const } },
+              { brand: { contains: search, mode: 'insensitive' as const } },
+              { category: { contains: search, mode: 'insensitive' as const } },
+            ],
+          }
+        : categoryFilter
+          ? { category: categoryFilter }
+          : undefined;
+
   const data = await prisma.product.findMany({
+    where: whereClause,
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * limit,
     take: limit,
   });
 
-  const dataCount = await prisma.product.count();
+  const dataCount = await prisma.product.count({ where: whereClause });
 
   return {
     data,
