@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { insertProductSchema, insertCartSchema, cartItemSchema, shippingAddressSchema, insertOrderSchema, insertOrderItemSchema, paymentResultSchema } from "@/lib/validators";
+import { insertProductSchema, insertCartSchema, cartItemSchema, shippingAddressSchema, insertOrderSchema, insertOrderItemSchema, paymentResultSchema, insertReviewSchema } from "@/lib/validators";
 import { OrderItem } from "@/lib/generated/prisma";
 
 export type Product = z.infer<typeof insertProductSchema> & {
@@ -23,3 +23,9 @@ export type Order = z.infer<typeof insertOrderSchema> & {
   };
 
 export type PaymentResult = z.infer<typeof paymentResultSchema>;
+
+export type Review = z.infer<typeof insertReviewSchema> & {
+  id: string;
+  createdAt: Date;
+  user?: { name: string };
+};
