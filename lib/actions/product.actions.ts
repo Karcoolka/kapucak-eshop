@@ -1,7 +1,7 @@
 "use server";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/prisma";
+import { Prisma, PrismaClient } from "../generated/prisma";
 import { convertToPlainObject, formatError } from "../utils";
 import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from "../constants";
 import { Product } from "@/types";
@@ -53,49 +53,48 @@ export async function getAllProducts({
   rating?: string;
   sort?: string;
 }) {
-  const rawQuery = (query ?? '').trim();
-  const rawCategory = (category ?? '').trim();
-  const search = rawQuery && rawQuery !== 'all' ? rawQuery : '';
-  const categoryFilter = rawCategory && rawCategory !== 'all' ? rawCategory : '';
-
-  const whereClause =
-    search && categoryFilter
+  // Filter by query
+  const queryFilter: Prisma.ProductWhereInput =
+    query && query !== "all"
       ? {
-          AND: [
-            {
-              OR: [
-                { name: { contains: search, mode: 'insensitive' as const } },
-                { slug: { contains: search, mode: 'insensitive' as const } },
-                { description: { contains: search, mode: 'insensitive' as const } },
-                { brand: { contains: search, mode: 'insensitive' as const } },
-                { category: { contains: search, mode: 'insensitive' as const } },
-              ],
-            },
-            { category: categoryFilter },
-          ],
+          name: {
+            contains: query,
+            mode: "insensitive",
+          } as Prisma.StringFilter,
         }
-      : search
-        ? {
-            OR: [
-              { name: { contains: search, mode: 'insensitive' as const } },
-              { slug: { contains: search, mode: 'insensitive' as const } },
-              { description: { contains: search, mode: 'insensitive' as const } },
-              { brand: { contains: search, mode: 'insensitive' as const } },
-              { category: { contains: search, mode: 'insensitive' as const } },
-            ],
-          }
-        : categoryFilter
-          ? { category: categoryFilter }
-          : undefined;
+      : {};
+
+  // Filter by category
+  const categoryFilter = category && category !== "all" ? { category } : {};
+
+  // Filter by price
+  const priceFilter: Prisma.ProductWhereInput =
+    price && price !== "all"
+      ? {
+          price: {
+            gte: Number(price.split("-")[0]),
+            lte: Number(price.split("-")[1]),
+          },
+        }
+      : {};
+
+  // Filter by rating
+  const ratingFilter =
+    rating && rating !== "all" ? { rating: { gte: Number(rating) } } : {};
 
   const data = await prisma.product.findMany({
-    where: whereClause,
-    orderBy: { createdAt: 'desc' },
+    where: {
+      ...queryFilter,
+      ...categoryFilter,
+      ...priceFilter,
+      ...ratingFilter,
+    },
+    orderBy: { createdAt: "desc" },
     skip: (page - 1) * limit,
     take: limit,
   });
 
-  const dataCount = await prisma.product.count({ where: whereClause });
+  const dataCount = await prisma.product.count();
 
   return {
     data,
@@ -152,16 +151,16 @@ export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
       where: { id: product.id },
     });
 
-    if (!productExists) throw new Error('Product not found');
+    if (!productExists) throw new Error("Product not found");
 
     // Update product
     await prisma.product.update({ where: { id: product.id }, data: product });
 
-    revalidatePath('/admin/products');
+    revalidatePath("/admin/products");
 
     return {
       success: true,
-      message: 'Product updated successfully',
+      message: "Product updated successfully",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
@@ -180,7 +179,7 @@ export async function getProductById(productId: string) {
 // Get product categories
 export async function getAllCategories() {
   const data = await prisma.product.groupBy({
-    by: ['category'],
+    by: ["category"],
     _count: true,
   });
 
@@ -191,7 +190,7 @@ export async function getAllCategories() {
 export async function getFeaturedProducts() {
   const data = await prisma.product.findMany({
     where: { isFeatured: true },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: 4,
   });
 
