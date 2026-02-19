@@ -1,5 +1,6 @@
 import Pagination from "@/components/shared/header/pagination";
 import ProductCard from "@/components/shared/product/product-card";
+import { Button } from "@/components/ui/button";
 import {
   getAllCategories,
   getAllProducts,
@@ -38,6 +39,8 @@ const toProduct = (p: Record<string, unknown>): Product =>
   }) as Product;
 
 const ratings = [4, 3, 2, 1];
+
+const sortOrders = ["newest", "lowest", "highest", "rating"];
 
 const SearchPage = async (props: {
   searchParams: Promise<{
@@ -176,6 +179,37 @@ const SearchPage = async (props: {
       </aside>
 
       <div className="min-w-0 flex-1 space-y-4">
+        <div className="flex-between flex-col md:flex-row my-4">
+          <div className="flex items-center">
+            {q !== "all" && q !== "" && "Query : " + q}
+            {category !== "all" &&
+              category !== "" &&
+              "   Category : " + category}
+            {price !== "all" && "    Price: " + price}
+            {rating !== "all" && "    Rating: " + rating + " & up"}
+            &nbsp;
+            {(q !== "all" && q !== "") ||
+            (category !== "all" && category !== "") ||
+            rating !== "all" ||
+            price !== "all" ? (
+              <Button variant={"link"} asChild>
+                <Link href="/search">Clear</Link>
+              </Button>
+            ) : null}
+          </div>
+          <div>
+            Sort by{" "}
+            {sortOrders.map((s) => (
+              <Link
+                key={s}
+                className={`mx-2   ${sort == s && "font-bold"} `}
+                href={getFilterUrl({ s })}
+              >
+                {s}
+              </Link>
+            ))}
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {productList.length === 0 && <div>No product found</div>}
           {productList.map((product) => (
@@ -191,47 +225,3 @@ const SearchPage = async (props: {
 };
 
 export default SearchPage;
-
-// return (
-//     <div className="space-y-6 py-6">
-//       <header className="space-y-1">
-//         <h1 className="h1-bold">Products</h1>
-//         {productList.length > 0 && (
-//           <p className="text-muted-foreground text-sm">
-//             Showing {productList.length} product
-//             {productList.length === 1 ? "" : "s"}
-//           </p>
-//         )}
-
-//         <div className="flex gap-2">
-//         URL: {
-//   getFilterUrl({ c: "Men's Dress Shirts" })
-// }
-//         </div>
-
-//       </header>
-//       {productList.length === 0 ? (
-//         <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg border border-dashed bg-muted/30 px-4 py-12 text-center">
-//           <p className="text-muted-foreground">
-//             No products match your search.
-//           </p>
-//           <p className="mt-1 text-sm text-muted-foreground">
-//             Try a different query or category.
-//           </p>
-//         </div>
-//       ) : (
-//         <>
-//           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-//             {productList.map((product) => (
-//               <ProductCard key={product.id} product={product} />
-//             ))}
-//           </div>
-//           {products!.totalPages > 1 && (
-//             <div className="flex justify-center pt-4">
-//               <Pagination page={page} totalPages={products!.totalPages} />
-//             </div>
-//           )}
-//         </>
-//       )}
-//     </div>
-//   );
