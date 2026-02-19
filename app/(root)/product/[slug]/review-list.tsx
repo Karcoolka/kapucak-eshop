@@ -81,16 +81,16 @@ const reload = async () => {
               <CardDescription>{review.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex space-x-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 <Rating value={review.rating} />
-                <div className="flex items-center">
-                  <User className="mr-1 h-3 w-3" />
+                <span className="flex items-center">
+                  <User className="mr-1 h-3 w-3 shrink-0" />
                   {review.user ? review.user.name : "Deleted User"}
-                </div>
-                <div className="flex items-center">
-                  <Calendar className="mr-1 h-3 w-3" />
+                </span>
+                <span className="flex items-center">
+                  <Calendar className="mr-1 h-3 w-3 shrink-0" />
                   {formatDateTime(review.createdAt).dateTime}
-                </div>
+                </span>
               </div>
             </CardContent>
           </Card>
