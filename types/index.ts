@@ -5,6 +5,7 @@ import { OrderItem } from "@/lib/generated/prisma";
 export type Product = z.infer<typeof insertProductSchema> & {
     id: string;
     rating: number;
+    numReviews: number;
     createdAt: Date;
 }
 

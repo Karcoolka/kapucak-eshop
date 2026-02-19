@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import ProductPrice from "./product-price";
 import { Product } from "@/types";
+import Rating from "./rating";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const imageSrc = product.images?.[0];
@@ -36,7 +37,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           </h2>
         </Link>
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-          <span className="text-sm text-muted-foreground">{product.rating} ★</span>
+        <Rating value={Number(product.rating)} />
           {product.stock > 0 ? (
             <ProductPrice value={Number(product.price)} />
           ) : (
