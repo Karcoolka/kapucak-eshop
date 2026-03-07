@@ -19,7 +19,7 @@ const Header = () => {
               height={48}
               priority={true}
             />
-            <span className="hidden lg:block font-bold text-2xl">
+            <span className="hidden lg:block font-bold text-2xl ml-2">
               {APP_NAME}
             </span>
           </Link>
