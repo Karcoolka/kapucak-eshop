@@ -9,9 +9,9 @@ const Header = () => {
   return (
     <header className="v-full border-b">
       <div className="wrapper flex-between">
-        <div className="flex-start">
+        <div className="flex-start gap-4">
           <CategoriesDrawer />
-          <Link href="/" className="flex-start ml-4">
+          <Link href="/" className="flex-start">
             <Image
               src={"/images/logo.svg"}
               alt={`${APP_NAME} logo`}
